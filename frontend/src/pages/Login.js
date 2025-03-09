@@ -6,6 +6,28 @@ import { Link } from "react-router-dom";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(true);
 
+  const [data,setData] = useState({
+    email : "",
+    password : ""
+  })
+
+  const handleOnChange = (e) => {
+    const {name , value} = e.target
+
+    setData((preve)=> {
+      return {
+        ...preve,
+        [name] : value
+      }
+    })
+  }
+
+  const submitForm = (e) => {
+    e.preventDefault()
+  }
+
+  console.log(data)
+
   return (
     <section id="login" className="mt-10 flex items-center justify-center">
       <div className="p-6 w-full max-w-md mx-auto bg-white shadow-xl rounded-lg">
@@ -16,7 +38,7 @@ const Login = () => {
         </div>
 
         {/* Login Form */}
-        <form className="pt-6 flex flex-col gap-4">
+        <form className="pt-6 flex flex-col gap-4" onSubmit={submitForm}>
           
           {/* Email Field */}
           <div className="grid">
@@ -24,7 +46,9 @@ const Login = () => {
             <div className="bg-gray-100 p-2 rounded-lg">
               <input 
                 type="email" 
-                placeholder="Enter email" 
+                placeholder="Enter email"
+                onChange={handleOnChange}
+                value={data.email} 
                 name="email" 
                 className="w-full h-full outline-none bg-transparent text-gray-800"
               />
@@ -38,6 +62,8 @@ const Login = () => {
               <input 
                 type={showPassword ? "text" : "password"} 
                 placeholder="Enter password" 
+                onChange={handleOnChange}
+                value={data.password} 
                 name="password" 
                 className="w-full h-full outline-none bg-transparent text-gray-800"
               />

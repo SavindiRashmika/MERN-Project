@@ -1,18 +1,25 @@
 import React, { useState } from "react";
 import loginIcon from "../assest/user.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import base64Image from "../util/base64Image";
+import SummaryApi from "../common";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
       const [showPassword, setShowPassword] = useState(false);
       const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     
-      const [data,setData] = useState({
-        name : "",
-        email : "",
-        password : "",
-        confirmPassword : ""
-      })
+      const [data, setData] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        profilePic: "",
+      });
+
+      const navigate = useNavigate()
+      
     
       const handleOnChange = (e) => {
         const {name , value} = e.target
@@ -24,10 +31,55 @@ const SignUp = () => {
           }
         })
       }
+
+      const uploadImage = async (e) => {
+        const file = e.target.files[0];
+      
+        if (!file) return;
+      
+        const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+        if (!validTypes.includes(file.type)) {
+          alert("Invalid file type. Only JPG and PNG allowed.");
+          return;
+        }
+      
+        if (file.size > 2 * 1024 * 1024) { // Limit 2MB
+          alert("File is too large! Max size: 2MB");
+          return;
+        }
+      
+        const image = await base64Image(file);
+        setData((prev) => ({ ...prev, profilePic: image }));
+      };
+      
     
-      const submitForm = (e) => {
-        e.preventDefault()
-      }
+      const submitForm = async (e) => {
+        e.preventDefault();
+      
+        if (data.password !== data.confirmPassword) {
+          alert("Passwords do not match"); // Add user feedback
+          return;
+        }
+      
+        try {
+          const response = await fetch(SummaryApi.signUp.url, {
+            method: SummaryApi.signUp.method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+      
+          const result = await response.json();
+      
+          if (!response.ok) {
+            toast(result.message || "Signup failed");
+          }
+          toast.success("Signup successful!")
+          navigate("/login")
+        } catch (error) {
+          toast.error(error.message);
+        }
+      };
+      
     
       console.log(data)
 
@@ -36,8 +88,18 @@ const SignUp = () => {
           <div className="p-6 w-full max-w-md mx-auto bg-white shadow-xl rounded-lg">
             
             {/* Login Icon */}
-            <div className="w-20 h-20 mx-auto">
-              <img src={loginIcon} alt="login icon" className="w-full h-full object-contain" />
+            <div className="w-20 h-20 mx-auto relative overflow-hidden rounded-full">
+              <div>
+              <img src={data.profilePic || loginIcon} alt='login icons'/>
+              </div>
+              <form>
+                <label>
+                  <div className="text-xs bg-slate-200 bg-opacity-75 pb-4 pt-2 cursor-pointer py-4 text-center absolute bottom-0 w-full ">
+                    Upload Image
+                  </div>
+                  <input type="file" className="hidden" onChange={uploadImage}/>
+                </label>
+              </form>
             </div>
     
             {/* Login Form */}
@@ -83,6 +145,7 @@ const SignUp = () => {
                     onChange={handleOnChange}
                     value={data.password} 
                     name="password" 
+                    required
                     className="w-full h-full outline-none bg-transparent text-gray-800"
                   />
                   <div className="ml-2 cursor-pointer text-gray-600 hover:text-gray-800 transition-all focus:outline-none" onClick={()=>setShowPassword((preve)=>!preve)}>
@@ -101,6 +164,7 @@ const SignUp = () => {
                     onChange={handleOnChange}
                     value={data.confirmPassword} 
                     name="confirmPassword" 
+                    required
                     className="w-full h-full outline-none bg-transparent text-gray-800"
                   />
                   <div className="ml-2 cursor-pointer text-gray-600 hover:text-gray-800 transition-all focus:outline-none" onClick={()=>setShowConfirmPassword((preve)=>!preve)}>

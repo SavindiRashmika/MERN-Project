@@ -1,35 +1,37 @@
 const bcrypt = require('bcryptjs')
-const userModel = require('../../models/userModel')
+const userModel = require('../models/userModel'); 
 const jwt = require('jsonwebtoken');
 
 async function userSignInController(req,res){
     try{
-        const { email , password} = req.body
+        const { email, password } = req.body;
 
-        if(!email){
-            throw new Error("Please provide email")
+        if (!email?.trim()) {
+            return res.status(400).json({ message: "Please provide a valid email", success: false, error: true });
         }
-        if(!password){
-             throw new Error("Please provide password")
+        if (!password?.trim()) {
+            return res.status(400).json({ message: "Please provide a valid password", success: false, error: true });
         }
 
-        const user = await userModel.findOne({email})
+        const user = await userModel.findOne({ email: email.trim() });
 
-       if(!user){
-            throw new Error("User not found")
-       }
+        if (!user) {
+            return res.status(404).json({ message: "User not found", success: false, error: true });
+        }
 
-       const checkPassword = await bcrypt.compare(password,user.password)
-
-       console.log("checkPassoword",checkPassword)
+        const checkPassword = await bcrypt.compare(password, user.password);
+        if (!checkPassword) {
+            return res.status(401).json({ message: "Invalid password", success: false, error: true });
+        }
+        
 
        if(checkPassword){
         const tokenData = {
-            _id : user._id,
-            email : user.email,
-        }
+            _id: user._id,
+            email: user.email,
+        };
         const token = await jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, { expiresIn: 60 * 60 * 8 });
-
+        
         const tokenOption = {
             httpOnly : true,
             secure : true
@@ -45,13 +47,13 @@ async function userSignInController(req,res){
        }else{
          throw new Error("Please check Password")
        }
-    }catch(err){
-        res.json({
-            message : err.message || err  ,
-            error : true,
-            success : false,
-        })
-    }
+    } catch (err) {
+        res.status(500).json({
+            message: err.message || "Internal Server Error",
+            error: true,
+            success: false,
+        });
+    }    
 
 }
 

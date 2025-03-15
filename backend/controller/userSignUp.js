@@ -1,4 +1,4 @@
-const User = require('../models/userModel')
+const userModel = require('../models/userModel'); 
 const bcrypt = require('bcryptjs');
 
 
@@ -8,9 +8,14 @@ async function userSignUpController(req,res){
 
         const user = await userModel.findOne({email})
 
-        if(user){
-            throw new Error("Already user exits.")
+        if (user) {
+            return res.status(400).json({
+                message: "User already exists.",
+                success: false,
+                error: true,
+            });
         }
+        
 
         if(!email){
            throw new Error("Please provide email")
@@ -22,37 +27,40 @@ async function userSignUpController(req,res){
             throw new Error("Please provide name")
         }
 
-        const salt = bcrypt.genSaltSync(10);
-        const hashPassword = await bcrypt.hashSync(password, salt);
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(password, salt);
+
 
         if(!hashPassword){
             throw new Error("Something is wrong")
         }
 
         const payload = {
-            ...req.body,
-            role : "GENERAL",
-            password : hashPassword
-        }
+            name,
+            email,
+            role: "GENERAL",
+            password: hashPassword,
+        };
+        
 
         const userData = new userModel(payload)
         const saveUser = await userData.save()
 
         res.status(201).json({
-            data : saveUser,
-            success : true,
-            error : false,
-            message : "User created Successfully!"
-        })
+            data: saveUser,
+            success: true,
+            error: false,
+            message: "User created successfully!",
+        });        
 
 
-    }catch(err){
-        res.json({
-            message : err.message || err  ,
-            error : true,
-            success : false,
-        })
-    }
+    } catch (err) {
+        res.status(500).json({
+            message: err.message || "Internal Server Error",
+            error: true,
+            success: false,
+        });
+    }    
 }
 
 module.exports = userSignUpController

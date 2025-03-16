@@ -53,7 +53,7 @@ const Header = () => {
         <div className='flex items-center gap-7'>
           {/* Profile Icon */}
           <div className='text-3xl cursor-pointer relative flex justify-center' onClick={() => setShowMenu(!showMenu)}>
-            {user._id ? (
+            {user?._id ? (
               <img src={user.profilePic} className='w-10 h-10 rounded-full' alt={user.name || "User"} />
             ) : (
               <FaUserCircle />

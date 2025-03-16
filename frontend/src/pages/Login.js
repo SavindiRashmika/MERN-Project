@@ -50,7 +50,6 @@ const Login = () => {
       console.log(dataApi); 
   
       if (dataApi.success) {
-        toast.success(dataApi.message);
         navigate("/");
         fetchUserDetails();
 

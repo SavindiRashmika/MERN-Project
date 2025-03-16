@@ -64,8 +64,8 @@ const Header = () => {
               <div className="absolute top-12 right-0 bg-white shadow-md rounded-lg p-3 w-48">
                 <p className="text-sm font-semibold">👤 {user.name || "Guest"}</p>
                 <hr className="my-2" />
-                <Link to="/admin" className="block text-lg py-2 hover:bg-gray-200 px-2 rounded-md">Admin Panel</Link>
-                <button onClick={handleLogout} className="w-full text-lg py-2 text-left text-red-600 hover:bg-gray-200 px-2 rounded-md">Logout</button>
+                <Link to="/admin-panel" className="block text-sm py-2 font-bold hover:bg-gray-200 px-2 rounded-md">Admin Panel</Link>
+                <button onClick={handleLogout} className="w-full text-sm font-bold py-2 text-left text-red-600 hover:bg-gray-200 px-2 rounded-md">Logout</button>
               </div>
             )}
           </div>

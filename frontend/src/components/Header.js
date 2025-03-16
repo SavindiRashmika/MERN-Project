@@ -8,7 +8,8 @@ import { useSelector } from 'react-redux';
 
 
 const Header = () => {
-  const user = useSelector(state => state?.user?.user)
+  const user = useSelector(state => state?.user?.user) || {};
+  console.log("User Data:", user);
 
 
   return (
@@ -31,7 +32,7 @@ const Header = () => {
           <div className='text-3xl cursor-pointer relative flex justify-center'>
             {
               user.profilePic ? (
-                <img src={user?.profilePic} className='w-10 h-10 rounded-full' alt='user?.name'/>
+                <img src={user.profilePic} className='w-10 h-10 rounded-full' alt={user.name || "User"}/>
               ) : (
                 <FaUserCircle />
               )

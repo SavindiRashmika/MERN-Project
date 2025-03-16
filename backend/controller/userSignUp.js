@@ -3,7 +3,7 @@ const userModel = require('../models/userModel');
 
 async function userSignUpController(req, res) {
     try {
-        const { email, password, name } = req.body;
+        const { email, password, name, profilePic } = req.body;
 
         if (!email || !password || !name) {
             return res.status(400).json({
@@ -13,8 +13,8 @@ async function userSignUpController(req, res) {
             });
         }
 
-        const user = await userModel.findOne({ email });
-        if (user) {
+        const userExists = await userModel.findOne({ email });
+        if (userExists) {
             return res.status(400).json({
                 message: "User already exists.",
                 success: false,
@@ -30,6 +30,7 @@ async function userSignUpController(req, res) {
             email,
             role: "GENERAL",
             password: hashPassword,
+            profilePic: profilePic || "",
         };
 
         const userData = new userModel(payload);
@@ -41,7 +42,7 @@ async function userSignUpController(req, res) {
             message: "User created successfully!",
         });
     } catch (err) {
-        console.log(err);  // Log error for better debugging
+        console.log(err);  
         res.status(500).json({
             message: err.message || "Internal Server Error",
             error: true,

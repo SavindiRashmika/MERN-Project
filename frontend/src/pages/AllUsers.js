@@ -3,17 +3,17 @@ import SummaryApi from '../common'
 import { toast } from 'react-toastify'
 import moment from 'moment'
 import { MdModeEdit } from "react-icons/md";
-//import ChangeUserRole from '../components/ChangeUserRole';
+import ChangeUserRole from '../components/ChangeUserRole';
 
 const AllUsers = () => {
     const [allUser,setAllUsers] = useState([])
-    // const [openUpdateRole,setOpenUpdateRole] = useState(false)
-    // const [updateUserDetails,setUpdateUserDetails] = useState({
-    //     email : "",
-    //     name : "",
-    //     role : "",
-    //     _id  : ""
-    // })
+    const [openUpdateRole,setOpenUpdateRole] = useState(false)
+    const [updateUserDetails,setUpdateUserDetails] = useState({
+        email : "",
+        name : "",
+        role : "",
+        _id  : ""
+    })
 
     const fetchAllUsers = async() =>{
         const fetchData = await fetch(SummaryApi.allUser.url,{
@@ -63,11 +63,11 @@ const AllUsers = () => {
                                     <td className='whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-600 sm:pl-3'>{moment(el?.createdAt).format('LL')}</td>
                                     <td className='whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-600 sm:pl-3'>
                                         <button className='p-2 rounded-full cursor-pointer hover:bg-green-400 text-xl hover:text-white' 
-                                        // onClick={()=>{
-                                        //     setUpdateUserDetails(el)
-                                        //     setOpenUpdateRole(true)
+                                        onClick={()=>{
+                                            setUpdateUserDetails(el)
+                                            setOpenUpdateRole(true)
 
-                                        // }}
+                                        }}
                                         >
                                             <MdModeEdit/>
                                         </button>
@@ -79,7 +79,7 @@ const AllUsers = () => {
                 </tbody>
             </table>
 
-            {/* {
+            {
                 openUpdateRole && (
                     <ChangeUserRole 
                         onClose={()=>setOpenUpdateRole(false)} 
@@ -90,7 +90,7 @@ const AllUsers = () => {
                         callFunc={fetchAllUsers}
                     />
                 )      
-            } */}
+            }
       </div>
     </div>
   )

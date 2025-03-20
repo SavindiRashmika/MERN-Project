@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import SummaryApi from "../common";
 import { toast } from "react-toastify";
 import { setUserDetails } from '../store/userSlice';
+import ROLE from '../common/role';
 
 const Header = () => {
   const user = useSelector(state => state?.user?.user) || {};
@@ -64,7 +65,12 @@ const Header = () => {
               <div className="absolute top-12 right-0 bg-white shadow-md rounded-lg p-3 w-48">
                 <p className="text-sm font-semibold">👤 {user.name || "Guest"}</p>
                 <hr className="my-2" />
-                <Link to="/admin-panel" className="block text-sm py-2 font-bold hover:bg-gray-200 px-2 rounded-md">Admin Panel</Link>
+
+                {
+                  user?.role === ROLE.ADMIN &&(
+                    <Link to={"/admin-panel/all-products"} className="block text-sm py-2 font-bold hover:bg-gray-200 px-2 rounded-md">Admin Panel</Link>                
+                  )
+                }
                 <button onClick={handleLogout} className="w-full text-sm font-bold py-2 text-left text-red-600 hover:bg-gray-200 px-2 rounded-md">Logout</button>
               </div>
             )}
